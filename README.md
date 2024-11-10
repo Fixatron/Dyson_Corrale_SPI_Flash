@@ -22,78 +22,15 @@ I attempted to read the flash while the chip was on the motherboard, but it gave
 <br>
 I've included the dump of the flash chip. If someone can contribute with a working flash chip dump, maybe we can crack the protocol for other dyson devices that lock out the battery.
 <br>
-In the flash_dump.hex file, important information seems to be stored every 0x1000 byted of data.
-<br>
-Likely its this chunk of data at 0x2000 that needs to be edited to remove the lockout. Also, the backup/previously stored data at 0x3000 likely needs to be changed, too, in order to remove the lockout. Likely, it will see the current data and reference the backup (from experience).
-<br>
-It looks like i may not have gotten a full dump of the flash chip, but I got the important stuff, like what addresses are used, whats repeating and whats not. Theres enough info here to go on if I can manage to get a dump of a working Dyson Corrale.
-<br>
 
 ## Analysis
-Data is written every 0x1000 bytes (ie. 0x0, 0x1000, 0x2000, 0x3000, 0x4000, etc.)
+After analysing a few bad dumps I thought I was onto something. Once I tied the Hold pin to Vcc, I finally got full clean reads.
 <br>
-Chunck at address 0x0 to 0x115 is repeated at 0x4000 to 0x4115
+There seems to be clear separation of data, but theres too much of it to make any sense of.
 <br>
-Section at address 0x3000 to 0x3013 starts similar to chunk at 0x0/0x4000. They all start with 5B 6B B6 (first 3 bytes), the following byte is $A5, whereas 0x03 is $55, making me think that these are bit flags. Up to 0x300F are 0s and 1s, likely bit flags. The final 4 bytes at 0x3010 to 0x3013 also seem significant. 
+If I had a dump from a working one I presume I could flash it to the battery-locked device and it would work again.
 <br>
-Address 0x1000 and 0x2000 start with the same 4 bytes. Not much to make sense of.
-<br>
-Overall, I'm sure there are some similarities to other dyson battery circuitboards. The more I dump the more we can glean. 
-
-## Raw data
-*0x0
-<br>
-5B 6B B6 55 25 00 01 00 00 00 14 00 00 00 00 00 <br>
-25 00 00 00 00 00 24 00 00 00 00 00 00 00 00 00 <br>
-00 00 00 00 00 00 00 02 00 00 00 00 00 03 01 00 <br>
-00 00 00 09 00 00 00 00 00 0A 00 00 00 00 00 0B <br>
-00 00 00 00 00 0C 00 00 00 00 00 0D 00 00 00 00 <br>
-00 0E 00 00 00 00 00 0F 00 00 00 00 00 10 00 00 <br>
-00 00 00 11 00 00 00 00 00 12 01 00 00 00 00 13 <br>
-01 00 00 00 00 14 00 00 00 00 00 19 00 00 00 00 <br>
-00 1A 00 00 00 00 00 1B 00 00 00 00 00 1C 00 00 <br>
-00 00 00 1D 00 00 00 00 00 1E 00 00 00 00 00 1F <br>
-00 00 00 00 00 20 00 00 00 00 00 21 01 00 00 00 <br>
-00 24 08 00 00 00 01 25 00 00 00 00 00 26 00 00 <br>
-00 00 00 27 00 00 00 00 00 28 00 00 00 00 00 29 <br>
-00 00 00 00 00 2A 00 00 00 00 00 2B 00 00 00 00 <br>
-00 2C 00 00 00 00 00 2D 00 00 00 00 00 2E 00 00 <br>
-00 00 00 2F 00 00 00 00 00 30 00 00 00 00 00 31 <br>
-00 00 00 00 00 32 00 00 00 00 00 33 00 00 00 00 <br>
-00 80 38 59 A5 5E
-<br>
-*0x1000<br>
-47 4F 4C 7F 46 04 00 00 D8 61 AA 3E 4C 00 00 00 <br>
-00 00 00 00 01 00 00 00 01 00 00 00 A1 03 00 00 <br>
-45 19 00 00 89 03 00 00 E7 36 D4 42 CC 14 9A 42 <br>
-2F D6 E1 41 F6 66 52 41 3E 5B 8D 42 D4 88 AB 41 <br>
-5D 04 D5 14<br>
-*0x2000<br>
-47 4F 4C 7F 10 00 01 C1 80 1A 06 00 34 A1 94 43 <br>
-00 00 14 42 00 00 88 41 00 00 88 41 41 21 41 43 <br>
-DC 2F 41 43 E5 38 00 00 93 63 E6 B8<br>
-*0x3000<br>
-5B 6B B6 A5 01 00 01 01 00 00 00 00 00 00 00 00 <br>
-7D F5 C9 18<br>
-*0x4000<br>
-5B 6B B6 55 25 00 01 00 00 00 14 00 00 00 00 00 <br>
-25 00 00 00 00 00 24 00 00 00 00 00 00 00 00 00 <br>
-00 00 00 00 00 00 00 02 00 00 00 00 00 03 01 00 <br>
-00 00 00 09 00 00 00 00 00 0A 00 00 00 00 00 0B <br>
-00 00 00 00 00 0C 00 00 00 00 00 0D 00 00 00 00 <br>
-00 0E 00 00 00 00 00 0F 00 00 00 00 00 10 00 00 <br>
-00 00 00 11 00 00 00 00 00 12 01 00 00 00 00 13 <br>
-01 00 00 00 00 14 00 00 00 00 00 19 00 00 00 00 <br>
-00 1A 00 00 00 00 00 1B 00 00 00 00 00 1C 00 00 <br>
-00 00 00 1D 00 00 00 00 00 1E 00 00 00 00 00 1F <br>
-00 00 00 00 00 20 00 00 00 00 00 21 01 00 00 00 <br>
-00 24 08 00 00 00 01 25 00 00 00 00 00 26 00 00 <br>
-00 00 00 27 00 00 00 00 00 28 00 00 00 00 00 29 <br>
-00 00 00 00 00 2A 00 00 00 00 00 2B 00 00 00 00 <br>
-00 2C 00 00 00 00 00 2D 00 00 00 00 00 2E 00 00 <br>
-00 00 00 2F 00 00 00 00 00 30 00 00 00 00 00 31 <br>
-00 00 00 00 00 32 00 00 00 00 00 33 00 00 00 00 <br>
-00 80 38 59 A5 5E<br>
+I dont feel theres much point to dig much deeper until I get a dump from a working device.
 
 ## Other Chips
 There is a <a href="https://www.ti.com/product/TPS55340-Q1">TPS55340-Q1 boost regulator</a> by Texas Instruments.
@@ -104,7 +41,7 @@ The SoC is made by Freescale Semiconductors and is also discontinued. <a href="h
 ## Setup
 I've used a RPi3B and included a pic from a <a href="https://www.youtube.com/watch?v=KNy-_ZzMnG0">YT video</a> for the GPIO pinouts.
 <br>
-Its possible i tied the hold pin to Vcc, but I forget. Sorry.
+I had to tie the hold pin to high or the chip would reset during the read
 <br>
 Did a few attempts before I noticed my version of flashrom was old. Did an update and things read smoothly.
 <br>
