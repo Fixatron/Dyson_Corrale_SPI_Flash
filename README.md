@@ -38,6 +38,7 @@ Section at address 0x3000 to 0x3013 starts similar to chunk at 0x0/0x4000. They 
 <br>
 Address 0x1000 and 0x2000 start with the same 4 bytes. Not much to make sense of.
 <br>
+Overall, I'm sure there are some similarities to other dyson battery circuitboards. The more I dump the more we can glean. 
 
 ## Raw data
 *0x0
